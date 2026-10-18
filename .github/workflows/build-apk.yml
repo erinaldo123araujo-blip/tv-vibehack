@@ -15,10 +15,13 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - uses: android-actions/setup-android@v3
-
+      # O runner já traz o Android SDK instalado (ANDROID_HOME), então não
+      # precisa da action setup-android (ela quebrou ao tentar instalar "tools").
       - name: Instalar plataforma e build-tools
-        run: sdkmanager "platforms;android-34" "build-tools;34.0.0"
+        run: |
+          SDKM="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SDKM" --licenses > /dev/null || true
+          "$SDKM" "platforms;android-34" "build-tools;34.0.0"
 
       # Configuração para o Elsys Smarty eTRI01 (Android TV 9, 1 GB RAM):
       # dock com Netflix, Prime Video, YouTube e Globoplay (os 4 pré-instalados).
